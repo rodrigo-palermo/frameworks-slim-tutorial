@@ -1,0 +1,2 @@
+Comando para atualizar banco de dados:
+vendor/bin/doctrine orm:schema-tool:update --force
