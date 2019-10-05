@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0969ae51-cd02-41aa-b0cb-e36bbc9dfd2e" name="frameworks-slim-tutorial" url="http://localhost/slim">
+        <fileTransfer port="0" mountedRoot="C:\xampp\htdocs\slim" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>
