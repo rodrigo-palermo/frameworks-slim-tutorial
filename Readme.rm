@@ -1,3 +1,5 @@
 Comando para atualizar banco de dados:
-windows:
+windows cmd:
 "vendor/bin/doctrine" orm:schema-tool:update --force
+windows powershell:
+vendor/bin/doctrine orm:schema-tool:update --force

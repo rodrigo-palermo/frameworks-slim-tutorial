@@ -1,10 +1,13 @@
 <?php
 namespace App\Models\Entity;
 /**
- * @Entity @Table(name="books")
+ * @Entity @Table(name="books")   #usa a tabela books do banco
  **/
 class Book {
-    /**
+    #para o Doctrine comunicar a classe com o banco
+    #o @ID será PK 
+    # é o auto incremento do banco. Cada banco implmeenta de um jeito
+    /**  
      * @var int
      * @Id @Column(type="integer")
      * @GeneratedValue

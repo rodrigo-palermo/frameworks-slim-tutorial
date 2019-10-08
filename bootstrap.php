@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
  * da nossa aplicação que vão ser consumidas durante a execução
  * da nossa API
  */
-$container = new \Slim\Container();
+$container = new \Slim\Container();  #o container carrega as variaveis para serem ustilizadas dentro dos metdos get, post, delete, put, etc no index. isso pq tais variáveis não estão disponiveis livremente
 $isDevMode = true;
 /**
  * Diretório de Entidades e Metadata do Doctrine

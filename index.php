@@ -1,6 +1,8 @@
 <?php
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+use App\Models\Entity\Book;
+//carregar books aqui ou já foi carregado em autoloa
 require 'bootstrap.php';
 
 /**
@@ -39,7 +41,7 @@ $app->get('/book/{id}', function (Request $request, Response $response) use ($ap
 //                       ->withHeader('Content-type', 'application/json');;
 //    return $return;
     $entityManager = $this->get('em');
-    $booksRepository = $entityManager->getRepository('App\Models\Entity\Book');
+    $booksRepository = $entityManager->getRepository('App\Models\Entity\Book');  #cria um repositório (tipo um array), e puxa o repositorio do EntityManager. E faz referência aà entidade Book
     $book = $booksRepository->find($id);
     $return = $response->withJson($book, 200)
         ->withHeader('Content-type', 'application/json');
@@ -60,11 +62,11 @@ $app->post('/book', function (Request $request, Response $response) use ($app) {
 //
 //    return $return;
     #versao3
-    $params = (object) $request->getParams();
+    $params = (object) $request->getParams();  # Pega os dados dos parametros
     /**
      * Pega o Entity Manager do nosso Container
      */
-    $entityManager = $this->get('em');
+    $entityManager = $this->get('em');  #pega os dados do container
     /**
      * Instância da nossa Entidade preenchida com nossos parametros do post
      */
@@ -74,7 +76,7 @@ $app->post('/book', function (Request $request, Response $response) use ($app) {
     /**
      * Persiste a entidade no banco de dados
      */
-    $entityManager->persist($book);
+    $entityManager->persist($book);  #neste momento nao precisa criar DAO, insert, etc
     $entityManager->flush();
     $return = $response->withJson($book, 201)
         ->withHeader('Content-type', 'application/json');
@@ -82,15 +84,44 @@ $app->post('/book', function (Request $request, Response $response) use ($app) {
 });
 /**
  * Atualiza os dados de um livro
+ * @request curl -X PUT http://localhost:8000/book/14 -H "Content-type: application/json" -d '{"name":"Deuses Americanos", "author":"Neil Gaiman"}'
  */
 $app->put('/book/{id}', function (Request $request, Response $response) use ($app) {
+    /**
+     * Pega o ID do livro informado na URL
+     */
     $route = $request->getAttribute('route');
     $id = $route->getArgument('id');
+    #versao1
 //    $response->getBody()->write("Modificando o livro {$id}");
 //    return $response;
-    $return = $response->withJson(['msg'=> "Modificando o livro {$id}"], 200)
-                       ->withHeader('Content-type', 'application/json');
+    #versao2
+    // $return = $response->withJson(['msg'=> "Modificando o livro {$id}"], 200)
+    //                    ->withHeader('Content-type', 'application/json');
+    // return $return;
+    #versao3
+    /**
+     * Encontra o Livro no Banco
+     */ 
+    $entityManager = $this->get('em');
+    $booksRepository = $entityManager->getRepository('App\Models\Entity\Book');
+    $book = $booksRepository->find($id);   
+    /**
+     * Atualiza e Persiste o Livro com os parâmetros recebidos no request
+     */
+    $book->setName($request->getParam('name'))
+        ->setAuthor($request->getParam('author'));
+    /**
+     * Persiste a entidade no banco de dados
+     */
+    $entityManager->persist($book);
+    $entityManager->flush();        
+    
+    $return = $response->withJson($book, 200)
+        ->withHeader('Content-type', 'application/json');
     return $return;
+
+
 });
 /**
  * Deleta o livro informado pelo ID
