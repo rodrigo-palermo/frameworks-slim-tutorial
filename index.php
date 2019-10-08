@@ -2,8 +2,11 @@
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use App\Models\Entity\Book;
-//carregar books aqui ou já foi carregado em autoloa
+//carregar books aqui ou já foi carregado em autoload
 require 'bootstrap.php';
+
+
+//obs.: contém indicação de versão 1 e 2 referentes às refatorações propostas no tutorial
 
 /**
  * Lista de todos os livros
@@ -30,7 +33,9 @@ $app->get('/book', function (Request $request, Response $response) use ($app) {
  * @request curl -X GET http://localhost:8000/book/1
  */
 $app->get('/book/{id}', function (Request $request, Response $response) use ($app) {
-
+    /**
+     * Pega o ID do livro informado na URL
+     */
     $route = $request->getAttribute('route');
     $id = $route->getArgument('id');
     #versao1
@@ -125,14 +130,38 @@ $app->put('/book/{id}', function (Request $request, Response $response) use ($ap
 });
 /**
  * Deleta o livro informado pelo ID
+ * @request curl -X DELETE http://localhost:8000/book/3
  */
 $app->delete('/book/{id}', function (Request $request, Response $response) use ($app) {
+    /**
+     * Pega o ID do livro informado na URL
+     */
     $route = $request->getAttribute('route');
     $id = $route->getArgument('id');
+    #versao1
 //    $response->getBody()->write("Deletando o livro {$id}");
 //    return $response;
+    #verso2
+//    $return = $response->withJson(['msg' => "Deletando o livro {$id}"], 204)
+//                       ->withHeader('Content-type', 'application/json');
+//    return $return;
+    #versao3
+    /**
+     * Encontra o Livro no Banco
+     */
+    $entityManager = $this->get('em');
+    $booksRepository = $entityManager->getRepository('App\Models\Entity\Book');
+    $book = $booksRepository->find($id);
+
+    /**
+     * Remove a entidade
+     */
+    $entityManager->remove($book);
+    $entityManager->flush();
+
     $return = $response->withJson(['msg' => "Deletando o livro {$id}"], 204)
                        ->withHeader('Content-type', 'application/json');
     return $return;
+
 });
 $app->run();
